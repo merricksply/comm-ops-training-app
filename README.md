@@ -20,6 +20,8 @@ comm-ops-training-app/
   README.md              ← this file
   MANUAL-SETUP.md        ← paste-into-Apps-Script guide
   docs/RUNBOOK.md        ← trainer / ops runbook
+  LLM_CONTEXT.md         ← full source bundle for LLM upload (regenerate with build_llm_bundle.py)
+  build_llm_bundle.py    ← rebuild LLM_CONTEXT.md after clasp pull
   .clasp.json            ← clasp config (rootDir: apps-script)
   apps-script/           ← all Apps Script source files
 ```
