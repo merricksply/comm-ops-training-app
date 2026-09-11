@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EOR Support Training</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --pr-purple-600: #5F17F8;
+      --pr-purple-50: #F5F1FF;
+      --pr-purple-100: #E9D7FE;
+      --pr-ink-900: #18181F;
+      --pr-text-muted: #6B6578;
+      --pr-white: #FFFFFF;
+      --pr-surface-app: #F8F7FC;
+      --pr-border: #E7E3F2;
+      --pr-success: #12B76A;
+      --pr-warning: #F79009;
+      --pr-danger: #D92D20;
+      --pr-radius-lg: 18px;
+      --pr-radius-pill: 999px;
+      --pr-shadow-card: 0 1px 2px rgba(24, 24, 31, 0.04), 0 8px 24px rgba(24, 24, 31, 0.05);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      background: var(--pr-surface-app);
+      color: var(--pr-ink-900);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .app { max-width: 900px; margin: 0 auto; padding: 24px 20px 48px; }
+    .hero { margin-bottom: 24px; }
+    .hero .eyebrow { color: var(--pr-purple-600); font-size: 13px; font-weight: 600; margin: 0 0 4px; }
+    .hero h1 { margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
+    .hero .sub { margin: 8px 0 0; color: var(--pr-text-muted); max-width: 640px; }
+    .card {
+      background: var(--pr-white);
+      border: 1px solid var(--pr-border);
+      border-radius: var(--pr-radius-lg);
+      box-shadow: var(--pr-shadow-card);
+      padding: 20px 22px;
+      margin-bottom: 16px;
+    }
+    .btn-primary {
+      background: var(--pr-purple-600);
+      color: #fff;
+      border: 0;
+      border-radius: var(--pr-radius-pill);
+      padding: 10px 20px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .btn-primary:disabled { opacity: 0.55; cursor: wait; }
+    .btn-secondary {
+      background: var(--pr-white);
+      color: var(--pr-ink-900);
+      border: 1px solid var(--pr-border);
+      border-radius: var(--pr-radius-pill);
+      padding: 10px 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .week-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .week-card {
+      border: 1px solid var(--pr-border);
+      border-radius: 14px;
+      padding: 16px;
+      background: var(--pr-white);
+      cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .week-card:hover:not(.disabled) {
+      border-color: var(--pr-purple-600);
+      box-shadow: var(--pr-shadow-card);
+    }
+    .week-card.disabled { opacity: 0.55; cursor: not-allowed; }
+    .week-card h3 { margin: 0 0 6px; font-size: 16px; }
+    .week-card p { margin: 0; font-size: 13px; color: var(--pr-text-muted); }
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: var(--pr-radius-pill);
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 8px;
+    }
+    .badge.open { background: var(--pr-purple-50); color: var(--pr-purple-600); }
+    .badge.done { background: #ECFDF3; color: var(--pr-success); }
+    .badge.locked { background: #F2F4F7; color: var(--pr-text-muted); }
+    .alert {
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      font-size: 13px;
+    }
+    .alert.warn { background: #FFFAEB; border: 1px solid #FEDF89; color: #7A2E0E; }
+    .alert.info { background: var(--pr-purple-50); border: 1px solid var(--pr-purple-100); color: var(--pr-ink-900); }
+    .question-block { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--pr-border); }
+    .question-block:last-child { border-bottom: 0; margin-bottom: 0; padding-bottom: 0; }
+    .question-meta { font-size: 12px; color: var(--pr-text-muted); margin-bottom: 8px; }
+    .question-meta strong { color: var(--pr-purple-600); }
+    .question-title { font-size: 16px; font-weight: 600; margin: 0 0 12px; }
+    .ticket-context {
+      background: var(--pr-surface-app);
+      border: 1px solid var(--pr-border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 13px;
+      white-space: pre-wrap;
+      margin-bottom: 12px;
+    }
+    .options label {
+      display: block;
+      padding: 10px 12px;
+      border: 1px solid var(--pr-border);
+      border-radius: 12px;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+    .options label:hover { border-color: var(--pr-purple-600); }
+    .options input { margin-right: 8px; }
+    textarea {
+      width: 100%;
+      min-height: 160px;
+      border: 1px solid var(--pr-border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-family: inherit;
+      font-size: 14px;
+      resize: vertical;
+    }
+    textarea:focus, select:focus { outline: 2px solid var(--pr-purple-100); border-color: var(--pr-purple-600); }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+    .result-item { margin-bottom: 16px; }
+    .result-score { font-weight: 700; font-size: 15px; }
+    .result-score.pass { color: var(--pr-success); }
+    .result-score.fail { color: var(--pr-danger); }
+    .improvements { margin: 8px 0 0; padding-left: 18px; color: var(--pr-text-muted); font-size: 13px; }
+    .kpi-row { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 16px; }
+    .kpi { flex: 1; min-width: 120px; }
+    .kpi .label { font-size: 12px; color: var(--pr-text-muted); }
+    .kpi .value { font-size: 28px; font-weight: 700; margin-top: 4px; }
+    .loader { text-align: center; padding: 40px; color: var(--pr-text-muted); }
+    .error-state h2 { margin: 0 0 8px; color: var(--pr-danger); }
+    .hidden { display: none !important; }
+    .progress { font-size: 13px; color: var(--pr-text-muted); margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="hero">
+      <p class="eyebrow">Playroll Support</p>
+      <h1 id="appTitle">EOR Support Training</h1>
+      <p class="sub" id="welcomeText">Loading your training profile…</p>
+    </header>
+
+    <div id="alerts"></div>
+    <div id="viewHome" class="hidden">
+      <section class="card">
+        <h2 style="margin:0 0 6px;font-size:18px;">Choose a week</h2>
+        <p style="margin:0;color:var(--pr-text-muted);font-size:13px;">Complete one session per week. Training runs on Fridays.</p>
+        <div class="week-grid" id="weekGrid"></div>
+      </section>
+    </div>
+
+    <div id="viewQuiz" class="hidden">
+      <section class="card">
+        <div class="progress" id="quizProgress"></div>
+        <div id="quizQuestions"></div>
+        <div class="actions">
+          <button type="button" class="btn-secondary" id="btnBackHome">Back</button>
+          <button type="button" class="btn-primary" id="btnSubmit">Submit week</button>
+        </div>
+      </section>
+    </div>
+
+    <div id="viewResults" class="hidden">
+      <section class="card" id="resultsCard"></section>
+      <div class="actions">
+        <button type="button" class="btn-primary" id="btnResultsHome">Back to weeks</button>
+      </div>
+    </div>
+
+    <div id="viewLoading" class="card loader">Loading…</div>
+    <div id="viewError" class="hidden"></div>
+  </div>
+
+  <script>
+    var state = {
+      context: null,
+      currentWeek: null,
+      questions: [],
+      answers: {}
+    };
+
+    function $(id) { return document.getElementById(id); }
+
+    function esc(s) {
+      return String(s || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function showView(name) {
+      ['viewHome', 'viewQuiz', 'viewResults', 'viewLoading', 'viewError'].forEach(function(id) {
+        $(id).classList.add('hidden');
+      });
+      if (name) $(name).classList.remove('hidden');
+    }
+
+    function showError(message) {
+      showView('viewError');
+      $('viewError').innerHTML = '<div class="card error-state"><h2>Something went wrong</h2><p>' + esc(message) + '</p><div class="actions"><button type="button" class="btn-primary" onclick="loadContext()">Try again</button></div></div>';
+    }
+
+    function renderAlerts(ctx) {
+      var html = '';
+      if (ctx.gates.fridayOnly && !ctx.gates.canStartQuiz) {
+        html += '<div class="alert warn">Training sessions open on Fridays (' + esc(ctx.gates.timezone) + '). You can review completed weeks, but new quizzes unlock on Friday.</div>';
+      }
+      html += '<div class="alert info">Pass mark: ' + ctx.passThresholdPct + '%. Ticket replies are AI-scored immediately; your trainer may adjust marks before the final report.</div>';
+      $('alerts').innerHTML = html;
+    }
+
+    function renderHome(ctx) {
+      $('appTitle').textContent = ctx.appTitle;
+      $('welcomeText').textContent = 'Welcome, ' + ctx.trainee.displayName + '. Weeks unlocked: ' + ctx.trainee.weeksUnlocked + ' of 4.';
+
+      var html = '';
+      ctx.availableWeeks.forEach(function(w) {
+        var disabled = w.completed || (!ctx.gates.canStartQuiz && !w.completed);
+        var badge = w.completed
+          ? '<span class="badge done">Completed' + (w.pctFinal != null ? ' · ' + w.pctFinal + '%' : '') + '</span>'
+          : (disabled ? '<span class="badge locked">Friday only</span>' : '<span class="badge open">Ready</span>');
+        html += '<div class="week-card' + (disabled ? ' disabled' : '') + '" data-week="' + w.week + '"' + (disabled ? '' : ' tabindex="0"') + '>' +
+          '<h3>Week ' + w.week + '</h3>' +
+          '<p>' + (w.completed ? 'Session submitted' : 'Knowledge + ticket exercises') + '</p>' +
+          badge + '</div>';
+      });
+
+      $('weekGrid').innerHTML = html;
+
+      Array.prototype.forEach.call(document.querySelectorAll('.week-card:not(.disabled)'), function(el) {
+        function start() {
+          var week = Number(el.getAttribute('data-week'));
+          startWeek(week);
+        }
+        el.addEventListener('click', start);
+        el.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); start(); }
+        });
+      });
+    }
+
+    function renderQuiz(data) {
+      state.currentWeek = data.week;
+      state.questions = data.questions;
+      state.answers = {};
+
+      $('quizProgress').textContent = 'Week ' + data.week + ' · ' + data.questions.length + ' question(s)';
+      var html = '';
+
+      data.questions.forEach(function(q, idx) {
+        html += '<div class="question-block" data-qid="' + esc(q.questionId) + '">';
+        html += '<div class="question-meta"><strong>' + esc(q.topic) + '</strong> · ' + esc(q.type) + ' · ' + q.maxPoints + ' pts</div>';
+        html += '<p class="question-title">' + (idx + 1) + '. ' + esc(q.questionText) + '</p>';
+
+        if (q.type === 'ticket') {
+          if (q.ticketContext) {
+            html += '<div class="ticket-context">' + esc(q.ticketContext) + '</div>';
+          }
+          html += '<textarea id="answer_' + esc(q.questionId) + '" placeholder="Draft your reply…" data-qid="' + esc(q.questionId) + '"></textarea>';
+        } else {
+          html += '<div class="options">';
+          (q.options || []).forEach(function(opt) {
+            var id = 'opt_' + q.questionId + '_' + opt.replace(/[^a-zA-Z0-9]/g, '').substring(0, 12);
+            html += '<label><input type="radio" name="q_' + esc(q.questionId) + '" value="' + esc(opt) + '" data-qid="' + esc(q.questionId) + '" /> ' + esc(opt) + '</label>';
+          });
+          html += '</div>';
+        }
+        html += '</div>';
+      });
+
+      $('quizQuestions').innerHTML = html;
+      showView('viewQuiz');
+    }
+
+    function collectAnswers() {
+      var answers = {};
+      state.questions.forEach(function(q) {
+        if (q.type === 'ticket') {
+          var ta = document.querySelector('textarea[data-qid="' + q.questionId + '"]');
+          answers[q.questionId] = ta ? ta.value : '';
+        } else {
+          var selected = document.querySelector('input[name="q_' + q.questionId + '"]:checked');
+          answers[q.questionId] = selected ? selected.value : '';
+        }
+      });
+      return answers;
+    }
+
+    function validateAnswers(answers) {
+      for (var i = 0; i < state.questions.length; i++) {
+        var q = state.questions[i];
+        if (!String(answers[q.questionId] || '').trim()) {
+          return 'Please answer all questions before submitting (missing: ' + q.questionId + ').';
+        }
+      }
+      return '';
+    }
+
+    function renderResults(data) {
+      var scoreClass = data.passed ? 'pass' : 'fail';
+      var html = '<h2 style="margin:0 0 16px;font-size:20px;">Week ' + data.week + ' results</h2>';
+      html += '<div class="kpi-row">';
+      html += '<div class="kpi"><div class="label">Score</div><div class="value ' + scoreClass + '">' + data.totalScore + ' / ' + data.maxPossible + '</div></div>';
+      html += '<div class="kpi"><div class="label">Percentage</div><div class="value ' + scoreClass + '">' + data.pct + '%</div></div>';
+      html += '<div class="kpi"><div class="label">Result</div><div class="value ' + scoreClass + '" style="font-size:18px;">' + (data.passed ? 'Pass' : 'Needs improvement') + '</div></div>';
+      html += '</div>';
+
+      if (data.trainerReviewNote) {
+        html += '<div class="alert info">' + esc(data.trainerReviewNote) + '</div>';
+      }
+
+      (data.results || []).forEach(function(r) {
+        html += '<div class="result-item">';
+        html += '<div class="result-score">' + esc(r.questionId) + ' · ' + esc(r.topic) + ' — ' + r.score + ' / ' + r.maxPoints + '</div>';
+        html += '<p style="margin:6px 0 0;">' + esc(r.feedback) + '</p>';
+        if (r.improvements) {
+          html += '<ul class="improvements">';
+          String(r.improvements).split('\n').filter(Boolean).forEach(function(line) {
+            html += '<li>' + esc(line.replace(/^[-*•]\s*/, '')) + '</li>';
+          });
+          html += '</ul>';
+        }
+        html += '</div>';
+      });
+
+      if (data.improvementsSummary) {
+        html += '<h3 style="margin:20px 0 8px;font-size:15px;">Summary improvements</h3>';
+        html += '<ul class="improvements">';
+        String(data.improvementsSummary).split('\n').filter(Boolean).forEach(function(line) {
+          html += '<li>' + esc(line.replace(/^[-*•]\s*/, '')) + '</li>';
+        });
+        html += '</ul>';
+      }
+
+      $('resultsCard').innerHTML = html;
+      showView('viewResults');
+    }
+
+    function startWeek(week) {
+      showView('viewLoading');
+      google.script.run
+        .withSuccessHandler(renderQuiz)
+        .withFailureHandler(showError)
+        .getWeekQuiz(week);
+    }
+
+    function submitQuiz() {
+      var answers = collectAnswers();
+      var validationError = validateAnswers(answers);
+      if (validationError) {
+        $('alerts').innerHTML = '<div class="alert warn">' + esc(validationError) + '</div>';
+        return;
+      }
+
+      $('btnSubmit').disabled = true;
+      $('btnSubmit').textContent = 'Scoring…';
+
+      google.script.run
+        .withSuccessHandler(function(data) {
+          $('btnSubmit').disabled = false;
+          $('btnSubmit').textContent = 'Submit week';
+          renderResults(data);
+        })
+        .withFailureHandler(function(err) {
+          $('btnSubmit').disabled = false;
+          $('btnSubmit').textContent = 'Submit week';
+          showError(err.message || String(err));
+        })
+        .submitWeekQuiz(state.currentWeek, JSON.stringify(answers));
+    }
+
+    function loadContext() {
+      showView('viewLoading');
+      google.script.run
+        .withSuccessHandler(function(ctx) {
+          state.context = ctx;
+          renderAlerts(ctx);
+          renderHome(ctx);
+          showView('viewHome');
+        })
+        .withFailureHandler(showError)
+        .getTraineeContext();
+    }
+
+    $('btnBackHome').addEventListener('click', function() {
+      if (state.context) {
+        renderHome(state.context);
+        showView('viewHome');
+      } else {
+        loadContext();
+      }
+    });
+
+    $('btnResultsHome').addEventListener('click', loadContext);
+    $('btnSubmit').addEventListener('click', submitQuiz);
+
+    document.addEventListener('DOMContentLoaded', loadContext);
+  </script>
+</body>
+</html>
